@@ -3,11 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/pdfImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true" />
+
 
     <com.example.codexpdfone.ui.AnnotationView
         android:id="@+id/annotationView"
