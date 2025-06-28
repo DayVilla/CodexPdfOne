@@ -40,7 +40,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     // PDF libraries for rendering and editing
-    implementation(libs.photo.view)
+    implementation ("com.github.chrisbanes:PhotoView:2.3.0")
 
     implementation(libs.pdfbox.android)
     testImplementation(libs.junit)

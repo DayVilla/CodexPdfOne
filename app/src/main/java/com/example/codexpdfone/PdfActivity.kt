@@ -34,9 +34,9 @@ class PdfActivity : AppCompatActivity() {
         annotationView = findViewById(R.id.annotationView)
 
         // Copy PDF asset to a file so PdfRenderer can read it
-        val file = File(cacheDir, "sample.pdf")
+        val file = File(cacheDir, "samplepd.pdf")
         if (!file.exists()) {
-            assets.open("sample.pdf").use { input ->
+            assets.open("samplepd.pdf").use { input ->
                 FileOutputStream(file).use { output ->
                     input.copyTo(output)
                 }
