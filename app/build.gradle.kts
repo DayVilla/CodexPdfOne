@@ -39,6 +39,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    // PDF libraries for rendering and editing
+    implementation(libs.photo.view)
+    implementation(libs.pdfbox.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
