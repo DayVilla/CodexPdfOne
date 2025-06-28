@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pdfRecyclerView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/pdfImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="true" />
-
-
-    <com.example.codexpdfone.ui.AnnotationView
-        android:id="@+id/annotationView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</FrameLayout>
+    android:layout_height="match_parent" />

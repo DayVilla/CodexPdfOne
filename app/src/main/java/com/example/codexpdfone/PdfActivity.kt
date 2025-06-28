@@ -1,69 +1,58 @@
 package com.example.codexpdfone
 
-import android.graphics.Bitmap
-import android.graphics.pdf.PdfRenderer
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
-import java.io.File
-import java.io.FileOutputStream
+import android.graphics.pdf.PdfRenderer
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.github.chrisbanes.photoview.PhotoView
-import com.example.codexpdfone.ui.AnnotationView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.codexpdfone.ui.PdfAdapter
+import com.example.codexpdfone.ui.PdfPage
+import java.io.File
+import java.io.FileOutputStream
 
 /**
- * Activity that showcases PDF viewing with a simple annotation overlay.
- * The PDF rendering uses Android's PdfRenderer with PhotoView for
- * smooth zooming and panning. AnnotationView demonstrates how
- * to capture freehand drawings that could later be converted into PDF
- * annotations using a library like PdfBox-Android.
+ * Activity showing multiple PDF files in a scrollable list. Each page supports
+ * pinch zoom and freehand annotations that scale along with the PDF.
  */
 class PdfActivity : AppCompatActivity() {
 
-    private lateinit var photoView: PhotoView
-    private lateinit var annotationView: AnnotationView
-    private var pdfRenderer: PdfRenderer? = null
-    private var currentPage: PdfRenderer.Page? = null
+    private val renderers = mutableListOf<PdfRenderer>()
+    private val pages = mutableListOf<PdfPage>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_pdf)
 
-        photoView = findViewById(R.id.pdfImage)
-        annotationView = findViewById(R.id.annotationView)
+        val recycler = findViewById<RecyclerView>(R.id.pdfRecyclerView)
+        recycler.layoutManager = LinearLayoutManager(this)
 
-        // Copy PDF asset to a file so PdfRenderer can read it
-        val file = File(cacheDir, "samplepd.pdf")
-        if (!file.exists()) {
-            assets.open("samplepd.pdf").use { input ->
-                FileOutputStream(file).use { output ->
-                    input.copyTo(output)
+        // Load all PDF assets and collect their pages
+        val assetPdfs = assets.list("")?.filter { it.endsWith(".pdf") } ?: emptyList()
+        for (name in assetPdfs) {
+            val file = File(cacheDir, name)
+            if (!file.exists()) {
+                assets.open(name).use { input ->
+                    FileOutputStream(file).use { output ->
+                        input.copyTo(output)
+                    }
                 }
             }
+            val descriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+            val renderer = PdfRenderer(descriptor)
+            renderers.add(renderer)
+            for (i in 0 until renderer.pageCount) {
+                pages.add(PdfPage(renderer, i))
+            }
         }
-        val descriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-        pdfRenderer = PdfRenderer(descriptor)
-        showPage(0)
 
-        // Allow user to draw over the PDF for annotations.
-        annotationView.drawingEnabled = true
-    }
-
-    private fun showPage(index: Int) {
-        currentPage?.close()
-        val renderer = pdfRenderer ?: return
-        if (index < 0 || index >= renderer.pageCount) return
-        val page = renderer.openPage(index)
-        currentPage = page
-        val bitmap = Bitmap.createBitmap(page.width, page.height, Bitmap.Config.ARGB_8888)
-        page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-        photoView.setImageBitmap(bitmap)
+        recycler.adapter = PdfAdapter(pages)
     }
 
     override fun onDestroy() {
-        currentPage?.close()
-        pdfRenderer?.close()
+        renderers.forEach { it.close() }
         super.onDestroy()
     }
 }
