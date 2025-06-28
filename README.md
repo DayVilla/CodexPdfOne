@@ -4,9 +4,9 @@
 
 ## Features
 
-- View PDF documents with smooth zooming and panning.
-- Freehand annotation overlay using `AnnotationView`.
-- Sample PDF bundled in the `assets` folder.
+- View multiple PDF files in a scrollable list.
+- Pinch zoom gestures with annotations scaling appropriately.
+- Sample PDFs bundled in the `assets` folder.
 - Ready to extend with form filling, signatures and image placement.
 
 ## Running
