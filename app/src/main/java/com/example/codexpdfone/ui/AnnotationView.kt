@@ -42,8 +42,13 @@ class AnnotationView @JvmOverloads constructor(
         val pts = floatArrayOf(event.x, event.y)
         inverse.mapPoints(pts)
         when (event.action) {
-            MotionEvent.ACTION_DOWN -> path.moveTo(pts[0], pts[1])
+            MotionEvent.ACTION_DOWN -> {
+                path.moveTo(pts[0], pts[1])
+                parent.requestDisallowInterceptTouchEvent(true)
+            }
             MotionEvent.ACTION_MOVE -> path.lineTo(pts[0], pts[1])
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL ->
+                parent.requestDisallowInterceptTouchEvent(false)
         }
         invalidate()
         return true

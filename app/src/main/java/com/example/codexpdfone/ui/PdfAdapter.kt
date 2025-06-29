@@ -13,7 +13,11 @@ private const val SCALE = 2f
  */
 class PdfAdapter(private val pages: List<PdfPage>): RecyclerView.Adapter<PdfAdapter.PageHolder>() {
 
-    class PageHolder(val pageView: PdfPageView): RecyclerView.ViewHolder(pageView)
+    class PageHolder(val pageView: PdfPageView): RecyclerView.ViewHolder(pageView) {
+        var index: Int = -1
+    }
+
+    private val holders = mutableMapOf<Int, PageHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageHolder {
         val view = PdfPageView(parent.context)
@@ -29,6 +33,7 @@ class PdfAdapter(private val pages: List<PdfPage>): RecyclerView.Adapter<PdfAdap
 
     override fun onBindViewHolder(holder: PageHolder, position: Int) {
         val desc = pages[position]
+        holder.index = position
         val page = desc.renderer.openPage(desc.index)
         val width = (page.width * SCALE).toInt()
         val height = (page.height * SCALE).toInt()
@@ -37,6 +42,16 @@ class PdfAdapter(private val pages: List<PdfPage>): RecyclerView.Adapter<PdfAdap
         page.render(bitmap, rect, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
         page.close()
         holder.pageView.setBitmap(bitmap)
+        holders[position] = holder
+    }
+
+    override fun onViewRecycled(holder: PageHolder) {
+        holders.entries.removeIf { it.value == holder }
+        super.onViewRecycled(holder)
+    }
+
+    fun addImage(position: Int, bitmap: Bitmap) {
+        holders[position]?.pageView?.addImage(bitmap)
     }
 }
 

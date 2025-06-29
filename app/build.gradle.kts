@@ -39,8 +39,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.viewpager2)
     // PDF libraries for rendering and editing
-    implementation ("com.github.chrisbanes:PhotoView:2.3.0")
+    implementation(libs.photo.view)
 
     implementation(libs.pdfbox.android)
     testImplementation(libs.junit)
