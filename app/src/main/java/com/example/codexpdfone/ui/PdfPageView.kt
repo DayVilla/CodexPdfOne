@@ -18,12 +18,15 @@ class PdfPageView @JvmOverloads constructor(
 
     private val photoView = PhotoView(context)
     private val annotationView = AnnotationView(context)
+    private val imageLayer = ImageLayer(context)
 
     init {
         addView(photoView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         addView(annotationView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+        addView(imageLayer, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         photoView.setOnMatrixChangeListener {
             annotationView.updateMatrix(photoView.imageMatrix)
+            imageLayer.updateMatrix(photoView.imageMatrix)
         }
     }
 
@@ -38,5 +41,9 @@ class PdfPageView @JvmOverloads constructor(
 
     fun clearAnnotations() {
         annotationView.clearAnnotations()
+    }
+
+    fun addImage(bitmap: Bitmap) {
+        imageLayer.addImage(bitmap)
     }
 }

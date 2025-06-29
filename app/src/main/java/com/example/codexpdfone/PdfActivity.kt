@@ -5,10 +5,11 @@ import android.os.ParcelFileDescriptor
 import android.graphics.pdf.PdfRenderer
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.example.codexpdfone.ui.PdfAdapter
 import com.example.codexpdfone.ui.PdfPage
+import android.graphics.BitmapFactory
 import java.io.File
 import java.io.FileOutputStream
 
@@ -20,14 +21,14 @@ class PdfActivity : AppCompatActivity() {
 
     private val renderers = mutableListOf<PdfRenderer>()
     private val pages = mutableListOf<PdfPage>()
+    private lateinit var adapter: PdfAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_pdf)
 
-        val recycler = findViewById<RecyclerView>(R.id.pdfRecyclerView)
-        recycler.layoutManager = LinearLayoutManager(this)
+        val pager = findViewById<ViewPager2>(R.id.pdfViewPager)
 
         // Load all PDF assets and collect their pages
         val assetPdfs = assets.list("")?.filter { it.endsWith(".pdf") } ?: emptyList()
@@ -48,7 +49,18 @@ class PdfActivity : AppCompatActivity() {
             }
         }
 
-        recycler.adapter = PdfAdapter(pages)
+        adapter = PdfAdapter(pages)
+        pager.adapter = adapter
+        pager.orientation = ViewPager2.ORIENTATION_VERTICAL
+
+        val addFab = findViewById<FloatingActionButton>(R.id.addImageFab)
+        addFab.setOnClickListener {
+            val bitmap = BitmapFactory.decodeResource(
+                resources,
+                R.drawable.ic_launcher_foreground
+            )
+            adapter.addImage(pager.currentItem, bitmap)
+        }
     }
 
     override fun onDestroy() {
